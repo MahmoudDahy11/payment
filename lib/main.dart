@@ -16,3 +16,12 @@ class CheckoutApp extends StatelessWidget {
     );
   }
 }
+
+
+/*
+ * Stripe Steps
+ * 1. Create Stripe Account
+ * 2. PaymentIntentObject <-  create paymentIntent (ammount, currency)  // backend
+ * 3. initialize payment sheet(paymentIntentClientSecret) // frontend
+ * present payment sheet // frontend
+ */ 
