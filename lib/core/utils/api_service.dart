@@ -10,19 +10,23 @@ class ApiService {
     required String url,
     String? token,
     Map<String, dynamic>? body,
+    Map<String, String>? headers,
     String? contentType,
   }) async {
     try {
-      Map<String, String> headers = {};
+      // Map<String, String> headers = {};
 
-      if (token != null) {
-        headers['Authorization'] = 'Bearer $token';
-      }
+      // if (token != null) {
+      //   headers['Authorization'] = 'Bearer $token';
+      // }
 
       var response = await _dio.post(
         url,
         data: body,
-        options: Options(headers: headers, contentType: contentType),
+        options: Options(
+          headers: headers ?? {'Authorization': 'Bearer $token'},
+          contentType: contentType,
+        ),
       );
       return response.data;
     } on DioException catch (e) {
