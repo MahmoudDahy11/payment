@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 /*
  * CustomException class
@@ -8,7 +9,6 @@ class CustomFailure {
   final String errMessage;
   CustomFailure({required this.errMessage});
 }
-
 
 /*
  * ServerFailure class
@@ -67,5 +67,41 @@ class ServerFailure extends CustomFailure {
     } else {
       return ServerFailure(errMessage: 'Unexpected error ,please try again!');
     }
+  }
+}
+
+/*
+ * StripeFailure class
+ * extends CustomFailure
+ * includes factory constructors to handle different StripeException cases
+ */
+class StripeFailure extends CustomFailure {
+  StripeFailure({required super.errMessage});
+
+  factory StripeFailure.fromStripeException(StripeException stripeException) {
+    final error = stripeException.error;
+
+    switch (error.code) {
+      case FailureCode.Canceled:
+        return StripeFailure(
+          errMessage: 'The payment process was canceled by the user.',
+        );
+      case FailureCode.Failed:
+        return StripeFailure(
+          errMessage: 'The payment process failed. Please try again.',
+        );
+      case FailureCode.Timeout:
+        return StripeFailure(
+          errMessage: 'Connection to Stripe timed out. Please try again.',
+        );
+      case FailureCode.Unknown:
+        return StripeFailure(
+          errMessage: 'An unknown error occurred during payment.',
+        );
+    }
+  }
+
+  factory StripeFailure.fromGenericError(dynamic error) {
+    return StripeFailure(errMessage: error.toString());
   }
 }
