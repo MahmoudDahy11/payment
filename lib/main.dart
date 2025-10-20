@@ -1,7 +1,11 @@
 import 'package:checkout_payment_ui/Features/checkout/presentation/views/my_cart_view.dart';
+import 'package:checkout_payment_ui/Features/checkout/presentation/views/thank_you_view.dart';
+import 'package:checkout_payment_ui/core/utils/api_keys.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() {
+  Stripe.publishableKey = ApiKeys.publishableKey;
   runApp(const CheckoutApp());
 }
 
@@ -10,18 +14,21 @@ class CheckoutApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyCartView(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyCartView(),
+        ThankYouView.id: (context) => const ThankYouView(),
+      },
+      // home: MyCartView(),
     );
   }
 }
 
 
-/*
- * Stripe Steps
- * 1. Create Stripe Account
- * 2. PaymentIntentObject <-  create paymentIntent (ammount, currency)  // backend
- * 3. initialize payment sheet(paymentIntentClientSecret) // frontend
- * present payment sheet // frontend
- */ 
+//Stripe Steps  
+// create payment intent (ammount, currency , customerId)  
+// craete EphemeralKey(customerId)
+// init payment sheet (merchantName, paymentIntentClientSecret, ephemeralKeySecret)
+// present payment sheet
