@@ -1,4 +1,3 @@
-
 import 'amount_details_model.dart';
 import 'automatic_payment_method_model.dart';
 import 'payment_method_options_model.dart';
