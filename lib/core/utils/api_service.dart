@@ -6,7 +6,7 @@ import '../errors/failure.dart';
 class ApiService {
   final Dio _dio = Dio();
 
-  Future<Response> post({
+  Future<dynamic> post({
     required String url,
     String? token,
     Map<String, dynamic>? body,
@@ -28,7 +28,7 @@ class ApiService {
           contentType: contentType,
         ),
       );
-      return response.data;
+      return response;
     } on DioException catch (e) {
       throw CustomException(
         errMessage: ServerFailure.fromDioException(e).errMessage,
