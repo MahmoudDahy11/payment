@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 
 class ThankYouView extends StatelessWidget {
   const ThankYouView({super.key});
-
+  static String id = 'ThankYouView';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(),
       body: Transform.translate(
-          offset: const Offset(0, -16), child: const ThankYouViewBody()),
+        offset: const Offset(0, -16),
+        child: const ThankYouViewBody(),
+      ),
     );
   }
 }
