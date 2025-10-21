@@ -11,6 +11,10 @@ class PaymentIntentModel {
   final int amountReceived;
   final AutomaticPaymentMethods? automaticPaymentMethods;
   final String captureMethod;
+  /*  
+  * clientSecret: A unique secret key associated with the payment intent. 
+  * This key is essential for securely completing the payment process on the client side.
+  */
   final String clientSecret;
   final String confirmationMethod;
   final int created;

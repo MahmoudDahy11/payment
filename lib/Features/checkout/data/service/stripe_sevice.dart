@@ -17,6 +17,7 @@ class StripeSevice {
   /*
   * this method to create payment intent on stripe server
   * return PaymentIntentModel
+  * بعرف Stripe اني عايز اعمل عملية دفع
    */
   Future<PaymentIntentModel> createPaymentIntent(
     PaymentIntentInputModel paymentIntentinputModel,
@@ -32,8 +33,31 @@ class StripeSevice {
   }
 
   /*
+  * this method to create Ephemeral Key on stripe server 
+  * return EphemeralKeysModel
+  * مفتاح قصير الأجل لتأمين عرض بيانات العميل المحفوظة (مثل بطاقاته).
+    */
+  Future<EphemeralKeysModel> createEphemeralkeys({
+    required String customerId,
+  }) async {
+    var reponse = await apiService.post(
+      url: 'https://api.stripe.com/v1/ephemeral_keys',
+      contentType: Headers.formUrlEncodedContentType,
+      body: {'customer': customerId},
+      token: ApiKeys.stripeSecretKey,
+      headers: {
+        'Stripe-Version': '2025-09-30.clover',
+        'Authorization': 'Bearer ${ApiKeys.stripeSecretKey}',
+      },
+    );
+    var ephemeralKeysModel = EphemeralKeysModel.fromJson(reponse.data);
+    return ephemeralKeysModel;
+  }
+
+  /*
   * this method to initialize payment sheet on stripe server
   *  paymentIntentClientSecret from createPaymentIntent method 
+  * تجهيز شاشة الدفع التي ستظهر للمستخدم بالبيانات اللازمة.
    */
   Future<void> initPaymentSheet({
     required InitPaymentSheetInputModel initPaymentSheetInputModel,
@@ -53,13 +77,13 @@ class StripeSevice {
   /*
   * this method to present payment sheet on stripe server 
   * display the payment sheet to user
+  * إظهار الشاشة للمستخدم ليقوم بإدخال بيانات بطاقته وإتمام الدفع.
    */
 
   Future<void> presentPaymentSheet() async {
     try {
       await Stripe.instance.presentPaymentSheet();
     } on StripeException catch (e) {
-
       if (e.error.code == FailureCode.Canceled) {
         throw CustomException(errMessage: 'Payment canceled by user');
       } else {
@@ -75,6 +99,7 @@ class StripeSevice {
   /*
   * this method to make payment 
   * call createPaymentIntent , initPaymentSheet , presentPaymentSheet methods
+  * تنفيذ عملية الدفع بالكامل من خلال استدعاء الخطوات اللازمة.
   */
 
   Future<void> makePayment({
@@ -96,10 +121,9 @@ class StripeSevice {
       );
       await presentPaymentSheet();
     } on StripeException catch (e) {
- 
       if (e.error.code == FailureCode.Canceled) {
         log('⚠️ Payment flow canceled by user');
-        return; 
+        return;
       }
       log('❌ Stripe Exception during payment: ${e.error.localizedMessage}');
       rethrow;
@@ -107,22 +131,5 @@ class StripeSevice {
       log('Unexpected error during makePayment: $e');
       rethrow;
     }
-  }
-
-  Future<EphemeralKeysModel> createEphemeralkeys({
-    required String customerId,
-  }) async {
-    var reponse = await apiService.post(
-      url: 'https://api.stripe.com/v1/ephemeral_keys',
-      contentType: Headers.formUrlEncodedContentType,
-      body: {'customer': customerId},
-      token: ApiKeys.stripeSecretKey,
-      headers: {
-        'Stripe-Version': '2025-09-30.clover',
-        'Authorization': 'Bearer ${ApiKeys.stripeSecretKey}',
-      },
-    );
-    var ephemeralKeysModel = EphemeralKeysModel.fromJson(reponse.data);
-    return ephemeralKeysModel;
   }
 }
